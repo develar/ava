@@ -64,7 +64,7 @@ Api.prototype._reset = function () {
 
 Api.prototype._runFile = function (file, onForkStarting) {
 	var options = objectAssign({}, this.options, {
-		precompiled: this.precompiler.generateHashForFile(file)
+		precompiled: this.precompiler == null ? null : this.precompiler.generateHashForFile(file)
 	});
 
 	var execArgv = process.execArgv.slice();
@@ -209,11 +209,14 @@ Api.prototype.run = function (files) {
 			}
 
 			var cacheEnabled = self.options.cacheEnabled !== false;
-			var cacheDir = (cacheEnabled && findCacheDir({name: 'ava', files: files})) ||
-				uniqueTempDir();
+			if (cacheEnabled) {
+				var cacheDir = (cacheEnabled && findCacheDir({name: 'ava', files: files})) ||
+					uniqueTempDir();
 
-			self.options.cacheDir = cacheDir;
-			self.precompiler = new CachingPrecompiler(cacheDir, self.options.babelConfig);
+				self.options.cacheDir = cacheDir;
+				self.precompiler = new CachingPrecompiler(cacheDir, self.options.babelConfig);
+			}
+
 			self.fileCount = files.length;
 			self.base = path.relative('.', commonPathPrefix(files)) + path.sep;
 
