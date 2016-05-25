@@ -44,9 +44,12 @@ util.inherits(Api, EventEmitter);
 module.exports = Api;
 
 Api.prototype._runFile = function (file, runStatus, execArgv) {
-	var hash = this.precompiler.precompileFile(file);
-	var precompiled = {};
-	precompiled[file] = hash;
+	var precompiled = null;
+	if (this.precompiler != null) {
+		precompiled = {};
+		var hash = this.precompiler.precompileFile(file);
+		precompiled[file] = hash;
+	}
 
 	var options = objectAssign({}, this.options, {
 		precompiled: precompiled
@@ -110,13 +113,13 @@ Api.prototype._run = function (files, _options) {
 	}
 
 	var cacheEnabled = self.options.cacheEnabled !== false;
-	var cacheDir = (cacheEnabled && findCacheDir({
-		name: 'ava',
-		files: files
-	})) || uniqueTempDir();
+	if (cacheEnabled) {
+		var cacheDir = (cacheEnabled && findCacheDir({name: 'ava', files: files})) ||
+									 uniqueTempDir();
 
-	self.options.cacheDir = cacheDir;
-	self.precompiler = new CachingPrecompiler(cacheDir, self.options.babelConfig);
+		self.options.cacheDir = cacheDir;
+		self.precompiler = new CachingPrecompiler(cacheDir, self.options.babelConfig);
+	}
 	self.fileCount = files.length;
 
 	var overwatch;

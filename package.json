@@ -1,6 +1,6 @@
 {
-  "name": "ava",
-  "version": "0.15.2",
+  "name": "ava-tf",
+  "version": "0.15.0",
   "description": "Futuristic test runner 🚀",
   "license": "MIT",
   "repository": "avajs/ava",
@@ -32,7 +32,9 @@
       "url": "juansoto.me"
     }
   ],
-  "bin": "cli.js",
+  "bin": {
+    "ava": "cli.js"
+  },
   "engines": {
     "node": ">=0.10.0"
   },
