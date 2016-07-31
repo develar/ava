@@ -35,18 +35,21 @@
   "bin": {
     "ava": "cli.js"
   },
+  "typings": "types/generated.d.ts",
   "engines": {
     "node": ">=0.10.0"
   },
   "scripts": {
     "test": "xo && nyc --cache --reporter=lcov --reporter=text tap --no-cov --timeout=150 test/api.js",
     "test-win": "tap --no-cov --reporter=classic --timeout=150 test/*.js test/reporters/*.js",
-    "visual": "node test/visual/run-visual-tests.js"
+    "visual": "node test/visual/run-visual-tests.js",
+    "prepublish": "npm run make-ts",
+    "make-ts": "babel-node --presets=babel-preset-es2015 --plugins=transform-runtime types/make.js"
   },
   "files": [
     "lib",
     "*.js",
-    "index.d.ts"
+    "types/generated.d.ts"
   ],
   "keywords": [
     "test",
@@ -83,6 +86,7 @@
     "array-union": "^1.0.1",
     "array-uniq": "^1.0.2",
     "arrify": "^1.0.0",
+    "ava-files": "^0.1.1",
     "ava-init": "^0.1.0",
     "babel-code-frame": "^6.7.5",
     "babel-core": "^6.3.21",
@@ -96,6 +100,7 @@
     "bluebird": "^3.0.0",
     "caching-transform": "^1.0.0",
     "chalk": "^1.0.0",
+    "chokidar": "^1.4.2",
     "clean-yaml-object": "^0.1.0",
     "cli-cursor": "^1.0.2",
     "cli-spinners": "^0.1.2",
@@ -154,6 +159,7 @@
     "update-notifier": "^1.0.0"
   },
   "devDependencies": {
+    "babel-cli": "^6.10.1",
     "babel-preset-react": "^6.5.0",
     "cli-table2": "^0.2.0",
     "coveralls": "^2.11.4",
@@ -177,12 +183,19 @@
     "xo": "*",
     "zen-observable": "^0.2.1"
   },
-  "optionalDependencies": {
-    "chokidar": "^1.4.2"
-  },
   "xo": {
     "rules": {
       "import/newline-after-import": 0
-    }
+    },
+    "overrides": [
+      {
+        "files": [
+          "test/**/*.js"
+        ],
+        "rules": {
+          "max-lines": 0
+        }
+      }
+    ]
   }
 }

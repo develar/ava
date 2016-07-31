@@ -8,7 +8,7 @@ var lolex = require('lolex');
 var proxyquire = require('proxyquire');
 var sinon = require('sinon');
 var test = require('tap').test;
-var AvaFiles = require('../lib/ava-files');
+var AvaFiles = require('ava-files');
 
 var setImmediate = require('../lib/globals').setImmediate;
 
@@ -36,25 +36,7 @@ function makeGroup(test) {
 }
 var group = makeGroup(test);
 
-test('chokidar is not installed', function (t) {
-	t.plan(2);
-
-	var Subject = proxyquire.noCallThru().load('../lib/watcher', {
-		chokidar: null
-	});
-
-	try {
-		new Subject({}, { // eslint-disable-line no-new
-			excludePatterns: [],
-			on: function () {}
-		}, [], []);
-	} catch (err) {
-		t.is(err.name, 'AvaError');
-		t.is(err.message, 'The optional dependency chokidar failed to install and is required for --watch. Chokidar is likely not supported on your platform.');
-	}
-});
-
-group('chokidar is installed', function (beforeEach, test, group) {
+group('chokidar', function (beforeEach, test, group) {
 	var chokidar;
 	var debug;
 	var logger;
@@ -79,7 +61,7 @@ group('chokidar is installed', function (beforeEach, test, group) {
 						debug.apply(null, args);
 					};
 				},
-				'./ava-files': avaFiles
+				'ava-files': avaFiles
 			});
 	}
 
@@ -598,8 +580,8 @@ group('chokidar is installed', function (beforeEach, test, group) {
 	test('initial exclude patterns override whether something is a test file', function (t) {
 		t.plan(2);
 
-		avaFiles = function (files, sources) {
-			var ret = new AvaFiles(files, sources);
+		avaFiles = function (options) {
+			var ret = new AvaFiles(options);
 			// Note: There is no way for users to actually set exclude patterns yet.
 			// This test just validates that internal updates to the default excludes pattern will be obeyed.
 			ret.excludePatterns = ['!*bar*'];
@@ -677,8 +659,8 @@ group('chokidar is installed', function (beforeEach, test, group) {
 	test('exclude patterns override directory matches', function (t) {
 		t.plan(2);
 
-		avaFiles = function (files, sources) {
-			var ret = new AvaFiles(files, sources);
+		avaFiles = function (options) {
+			var ret = new AvaFiles(options);
 			// Note: There is no way for users to actually set exclude patterns yet.
 			// This test just validates that internal updates to the default excludes pattern will be obeyed.
 			ret.excludePatterns = ['!**/exclude/**'];
