@@ -65,12 +65,12 @@ util.inherits(Api, EventEmitter);
 module.exports = Api;
 
 Api.prototype._runFile = function (file, runStatus, execArgv) {
-	var hash = this.precompiler.precompileFile(file);
-	var precompiled = {};
-	precompiled[file] = hash;
+	// var hash = this.precompiler.precompileFile(file);
+	// var precompiled = {};
+	// precompiled[file] = hash;
 
 	var options = objectAssign({}, this.options, {
-		precompiled: precompiled
+		// precompiled: precompiled
 	});
 
 	var emitter = fork(file, options, execArgv);
